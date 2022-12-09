@@ -2,7 +2,9 @@ package com.raj.FinalSalesken.Repository;
 
 import com.raj.FinalSalesken.Model.Semester;
 import com.raj.FinalSalesken.Model.Student;
+import org.elasticsearch.common.UUIDs;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.Transient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,8 +25,9 @@ public class StudentService {
 
     public String addStudent(String name) {
 
-        int nextId = (int) studentRepository.count() + 1;
-        String Id = Integer.toString(nextId);
+//        int nextId = (int) studentRepository.count() + 1;
+
+        String Id = UUIDs.randomBase64UUID();//Integer.toString(nextId);
 
         System.out.println("Student Count : " + Id);
 
@@ -51,8 +54,7 @@ public class StudentService {
 
     }
 
-    @Transactional
-    public String addMarks(String studentId, int semId, String subject, Integer marks) {
+    public String addMarks(String studentId, int semId, String subject, int marks) {
 
         try {
 
@@ -62,23 +64,34 @@ public class StudentService {
                 return "Marks add unsuccessfull, no student with StudentId : " + semId;
             }
 
-            Student student = ((Student[]) students.stream().toArray())[0];
+            Student student = students.get();
+            List<Semester> semestersList = student.getSemesters();
 
-            for (Semester sem : student.getSemesters()) {
+            for (Semester sem : semestersList) {
+
+                System.out.println(sem.getSemId());
+                System.out.println(semId);
+                System.out.println(sem.getSemId() == semId);
+                System.out.println((subject.equals("Maths")));
+
                 if (sem.getSemId() == semId) {
-                    if (subject == "English") {
+                    if (subject.equals("English")) {
                         sem.setEnglish(marks);
-                    } else if (subject == "Maths") {
-                        sem.setEnglish(marks);
-                    } else if (subject == "Science") {
-                        sem.setEnglish(marks);
+                    } else if (subject.equals("Maths")) {
+                        sem.setMaths(marks);
+                    } else if (subject.equals("Science")) {
+                        sem.setScience(marks);
                     } else {
                         return "error in subject name";
                     }
-                } else {
-                    return "Error in semId!!!";
+
+                    break;
                 }
-            }
+            }//for
+
+            student.setSemesters(semestersList);
+            studentRepository.save(student);
+
         }catch (Exception e){
             System.out.println(e.toString());
         }
@@ -87,15 +100,15 @@ public class StudentService {
     }
 
     public Student getStudent(String studentId) {
-        Optional<Student> students = null;
 
         try {
-            students = studentRepository.findById(studentId);
+            Optional<Student> students = studentRepository.findById(studentId);
 
             if (students.isEmpty()) {
                 throw new Exception("getStudent() failed!");
             }
-            Student student = ((Student[]) students.stream().toArray())[0];
+
+            Student student = students.get();
             return student;
 
         } catch (Exception e) {
@@ -114,7 +127,7 @@ public class StudentService {
             }
             return studentList;
         } catch (Exception e) {
-            System.out.println(e.toString());
+            System.out.println("erro : " + e.toString());
         }
         return new ArrayList<Student>();
     }

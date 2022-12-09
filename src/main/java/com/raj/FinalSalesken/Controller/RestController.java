@@ -20,7 +20,7 @@ public class RestController {
     @Autowired
     private StudentService service;
 
-    @PostMapping(value = "/addStudent", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/addStudentByName", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> addStudent(@RequestBody String studentName) throws IOException{
 
         System.out.println("Student name : " + studentName);
@@ -30,7 +30,7 @@ public class RestController {
     }
 
     @GetMapping("/findStudent")
-    public ResponseEntity<Object> getStudent(@RequestParam("Id") String Id) throws IOException{
+    public ResponseEntity<Object> getStudentById(@RequestParam("Id") String Id) throws IOException{
         Student student = service.getStudent(Id);
         return new ResponseEntity<>(student, HttpStatus.OK);
     }
@@ -38,8 +38,6 @@ public class RestController {
     @GetMapping(value = "/getAll")
     public ResponseEntity<Object> getAllStudent() throws IOException{
         List<Student> students = service.getAllStudents();
-
-        System.out.println("All students are returned fine second is : " + students.get(1).toString());
         return new ResponseEntity<>(students, HttpStatus.OK);
     }
 
@@ -47,9 +45,9 @@ public class RestController {
     public ResponseEntity<Object> addMarks(@RequestParam("Id")String Id,
                                            @RequestParam("sem")int sem,
                                            @RequestParam("subject")String subject,
-                                           @RequestParam("marks")Integer marks) throws Exception {
+                                           @RequestParam("marks")int marks) throws Exception {
 
-        System.out.println("class of Id: " + Id.getClass());
+        System.out.println(Id + " -" + subject);
 
         String response = service.addMarks(Id,sem,subject,marks);
         return new ResponseEntity<>(response, HttpStatus.OK);
