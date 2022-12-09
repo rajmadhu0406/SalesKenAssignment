@@ -6,6 +6,8 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Document(indexName = "student-index" )
@@ -16,7 +18,7 @@ public class Student {
     private String id;
     @Field(type = FieldType.Text, name = "name")
     private String name;
-    @Field(type = FieldType.Nested, includeInParent = true, name = "semesters")
+    @Field(type = FieldType.Auto, name = "semesters")
     private List<Semester> semesters;
 
     public Student() {
@@ -27,6 +29,21 @@ public class Student {
         this.name = name;
         this.semesters = semesters;
     }
+
+    public Student(String id, String name)
+    {
+        this.id = id;
+        this.name = name;
+
+        Semester first = new Semester(1);
+        Semester second = new Semester(2);
+        List<Semester> semList= new ArrayList<>();
+        semList.add(first);
+        semList.add(second);
+
+        this.semesters = semList;
+    }
+
 
     public String getId() {
         return id;

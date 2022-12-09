@@ -12,13 +12,19 @@ public class Semester {
 
     public Semester(int semId, int english, int maths, int science) {
         this.semId = semId;
-        English = english;
-        Maths = maths;
-        Science = science;
+        this.English = english;
+        this.Maths = maths;
+        this.Science = science;
     }
 
     public Semester() {
     }
+
+    public Semester(int semId)
+    {
+        this.semId = semId;
+    }
+
 
     public int getSemId() {
         return semId;
