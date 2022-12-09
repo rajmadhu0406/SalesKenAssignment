@@ -26,7 +26,20 @@ public class StudentService {
         int nextId = (int) studentRepository.count() + 1;
         String Id = Integer.toString(nextId);
 
-        Student student = new Student(Id, name);
+        System.out.println("Student Count : " + Id);
+
+
+        Semester first = new Semester(1);
+        Semester second = new Semester(2);
+        List<Semester> semList= new ArrayList<>();
+        semList.add(first);
+        semList.add(second);
+
+//      student.setSemesters(semList);
+        Student student = new Student(Id, name, semList);
+
+        System.out.println("Student Count : " + Id);
+        System.out.println("Student semesters : " + student.getSemesters());
 
         try {
             studentRepository.save(student);
@@ -39,7 +52,7 @@ public class StudentService {
     }
 
     @Transactional
-    public String addMarks(String studentId, int semId, String subject, int marks) {
+    public String addMarks(String studentId, int semId, String subject, Integer marks) {
 
         try {
 
@@ -99,13 +112,11 @@ public class StudentService {
             for (Student s : students) {
                 studentList.add(s);
             }
-
             return studentList;
         } catch (Exception e) {
             System.out.println(e.toString());
         }
-
-        return null;
+        return new ArrayList<Student>();
     }
 
     public String deleteStudent(String id){

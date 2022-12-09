@@ -34,14 +34,6 @@ public class Student {
     {
         this.id = id;
         this.name = name;
-
-        Semester first = new Semester(1);
-        Semester second = new Semester(2);
-        List<Semester> semList= new ArrayList<>();
-        semList.add(first);
-        semList.add(second);
-
-        this.semesters = semList;
     }
 
 
