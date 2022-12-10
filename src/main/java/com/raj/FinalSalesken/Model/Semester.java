@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 public class Semester {
 
     private int semId; // can be 1 or 2
-    private int English = -1;
-    private int Maths = -1;
-    private int Science = -1;
+    private int English = 0;
+    private int Maths = 0;
+    private int Science = 0;
 
     public Semester(int semId, int english, int maths, int science) {
         this.semId = semId;

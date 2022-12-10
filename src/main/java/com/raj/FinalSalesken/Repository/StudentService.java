@@ -1,18 +1,17 @@
 package com.raj.FinalSalesken.Repository;
 
+import co.elastic.clients.util.Pair;
 import com.raj.FinalSalesken.Model.Semester;
 import com.raj.FinalSalesken.Model.Student;
 import org.elasticsearch.common.UUIDs;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.Transient;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.text.DecimalFormat;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.lang.Math.round;
 
 @Service
 public class StudentService {
@@ -63,6 +62,7 @@ public class StudentService {
             if (students.isEmpty()) {
                 return "Marks add unsuccessfull, no student with StudentId : " + semId;
             }
+
 
             Student student = students.get();
             List<Semester> semestersList = student.getSemesters();
@@ -142,6 +142,70 @@ public class StudentService {
         return "Successfully deleted student with Id : " + id;
 
     }
+
+
+    public String averagePercentage(int sem)
+    {
+        Double average = 0.0;
+
+        try {
+            List<Double> percentageList = new ArrayList<>();
+            Iterable<Student> studentList = studentRepository.findAll();
+            for(Student s : studentList)
+            {
+                Semester semester = s.getSemesters().get(sem-1);
+                Double sum = Double.valueOf((semester.getEnglish() + semester.getMaths() + semester.getScience()));
+                Double percentage = sum/3;
+                percentageList.add(percentage);
+            }
+
+            for(Double d : percentageList)
+            {
+                average += d;
+            }
+
+            average = average/percentageList.size();
+            System.out.println("average : " + average);
+
+        }catch (Exception e)
+        {
+            System.out.println(e.toString());
+        }
+
+        DecimalFormat df = new DecimalFormat("####0.00");
+
+        return df.format(average);
+    }
+
+
+
+
+    public HashMap<String, Double> top2(){
+
+//        List<Pair<String,Double>> top = new ArrayList<>();
+        HashMap<String, Double> map = new HashMap<String, Double>();
+
+        try {
+            Iterable<Student> studentList = studentRepository.findAll();
+            for(Student s : studentList)
+            {
+                Semester semester1 = s.getSemesters().get(0);
+                Semester semester2 = s.getSemesters().get(1);
+                Double sum = Double.valueOf((semester1.getEnglish() + semester1.getMaths() + semester1.getScience()+
+                        semester2.getEnglish() + semester2.getMaths() + semester2.getScience()));
+                Double max = sum/2;
+                map.put(s.getId(), max);
+            }
+
+//
+
+        }catch (Exception e)
+        {
+            System.out.println(e.toString());
+        }
+        return map;
+    }
+
 
 
 }
